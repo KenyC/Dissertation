@@ -1,6 +1,13 @@
+FILES   := $(wildcard *.py)
+TARGETS := $(FILES:.py=_)
+HTML    := $(FILES:.py=.html)
 
-all: $(wildcard *.py)
+all: $(HTML)
 	@echo "Converting all notebooks"
+	
+display: $(TARGETS)
+	@echo "All notebooks converted and displayed"
+
 
 %_: %.html
 	firefox $<

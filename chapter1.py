@@ -13,7 +13,7 @@ from exh.exts.gq   import *
 from exh.model     import options
 import exh.options as     options_alts
 
-options.dom_quant     = 6      # Setting a large-ish domain of quantification
+options.dom_quant     = 4      # Setting a large-ish domain of quantification
 options.latex_display = False  # disabling LateX display ; you can enable if you're using Jupyter Notebook (as opposed to IPython) 
 display = jprint if options.latex_display else print
 options_alts.scales   = [{Existential, Universal}, {Existential, Most}] # Remove "or"/"and" scale; we'll be using disjunction to model existentials without universal alternatives
@@ -21,7 +21,8 @@ options_alts.scales   = [{Existential, Universal}, {Existential, Most}] # Remove
 
 # %%
 """
-# Exhaustive participation inferences in non-cumulative sentences: recursive Exh <span id="noncumulative"></span>
+<span id="noncumulative"></span>
+# Exhaustive participation inferences in non-cumulative sentences: recursive Exh 
 *The dancers smiled*
 """
 
@@ -46,7 +47,8 @@ sentence.diagnose(display)
 
 # %%
 """
-# Exhaustive participation inferences in non-cumulative sentences: innocent inclusion Exh <span id="noncumulative_ii"></span>
+<span id="noncumulative_ii"></span>
+# Exhaustive participation inferences in non-cumulative sentences: innocent inclusion Exh 
 *The dancers smiled*
 """
 
@@ -64,49 +66,85 @@ sentence.diagnose(display)
 
 # %%
 """
-# Cumulative reading of every <span id="cumulative_every"></span>
+<span id="cumulative_every_naive"></span>
+# Cumulative reading of every : non-recursive exhaustification
+
+Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla & Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
 """
 
 # setting a and b to depend on x (innocuous warnings appear)
-# here, we only use two disjuncts ; with a "large" domain of quantification (6 as set earlier), 3 disjuncts imply 200k logical possbilities
+# here, we only use thee disjuncts ; the number of logical possibility can quickly explode
 a("x")
 b("x")
-universe = Universe(fs = [a, b])
+c("x")
 
-prejacent  = Ax > a | b
+prejacent  = Ax > a | b | c
+universe   = Universe(f = prejacent)
+sentence   = Exh(prejacent, scales = []) # we must ignore the "some/all" scales. As p
+
+print("Assumed LF:", sentence)
+
+sentence.diagnose(display)
+print(
+	"There is a nut that only Scrat cracked:", 
+	universe.entails(sentence, Ex > a & ~b & ~c)
+)
+print(
+	"Equivalent to cumulative reading:", 
+	universe.equivalent(
+		sentence, 
+		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+	)
+)
+# %%
+"""
+<span id="cumulative_every"></span>
+# Cumulative reading of every 
+"""
+
+prejacent  = Ax > a | b | c
+universe = Universe(f = prejacent)
 sentence   = Exh(Exh(prejacent))
 
 print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
-print("Equivalent to cumulative reading:", universe.equivalent(sentence, prejacent & (Ex > a) & (Ex > b)))
+print(
+	"Equivalent to cumulative reading:", 
+	universe.equivalent(
+		sentence, 
+		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+	)
+)
 
 # %%
 """
-# Cumulative reading of every: the innocent inclusion approach <span id="cumulative_every_ii"></span>
+<span id="cumulative_every_ii"></span>
+# Cumulative reading of every: the innocent inclusion approach 
 """
 
-prejacent  = Ax > a | b
+prejacent  = Ax > a | b | c
 sentence   = Exh(prejacent, ii = True)
 
 print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
-print("Equivalent to cumulative reading:          ", universe.equivalent(sentence, prejacent & (Ex > a) & (Ex > b)))
-print("Equivalent to doubly-distributive reading: ", universe.equivalent(sentence, (Ax > a) & (Ax > b)))
+print("Equivalent to cumulative reading:          ", universe.equivalent(sentence, prejacent & (Ex > a) & (Ex > b) & (Ex > c)))
+print("Equivalent to doubly-distributive reading: ", universe.equivalent(sentence, (Ax > a) & (Ax > b) & (Ax > c)))
 
 # %%
 """
-# Cumulative reading of most <span id="cumulative_most"></span>
+<span id="cumulative_most"></span>
+# Cumulative reading of most 
 """
-prejacent  = Mx > a | b
+prejacent  = Mx > a | b | c
 first_exh  = Exh(prejacent)
 lf         = Exh(first_exh)
 
 print("Assumed LF:", lf)
 
 lf.diagnose(display)
-print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (Ex > a) & (Ex > b)))
+print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (Ex > a) & (Ex > b) & (Ex > c)))
 
 
 
@@ -114,7 +152,8 @@ print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (
 
 # %%
 """
-# Asymmetries in cumulative readings <span id="asymmetries"></span>
+<span id="asymmetries"></span>
+# Asymmetries in cumulative readings 
 Non-cumulative reading of every.
 """
 
@@ -127,6 +166,42 @@ print("Assumed LF:", lf)
 lf.diagnose(display)
 print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
 print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
+
+# %%
+"""
+<span id="asymmetries"></span>
+# Asymmetries in cumulative readings 
+Non-cumulative reading of every.
+"""
+
+scales     = [{Existential, Universal}] # our "disjunction", which models the existential with subdomain alternates, should not have a conjunctive alternative
+lf         = Exh(Exh(Ax > Exh(Exh(a | b))))
+print("Assumed LF:", lf)
+
+
+
+lf.diagnose(display)
+print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
+print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
+
+# %%
+"""
+<span id="ordinary"></span>
+# Ordinary cumulative sentences 
+Ordinary cumulative sentences  
+*The squirrels cracked the nuts*
+"""
+
+s1_cracked_n1 = Pred(1, name = "s1 cracked n1")
+s1_cracked_n2 = Pred(2, name = "s2 cracked n1")
+s2_cracked_n1 = Pred(3, name = "s1 cracked n2")
+s2_cracked_n2 = Pred(4, name = "s2 cracked n2")
+
+
+sentence = Exh(Exh(s1_cracked_n1, alts = [s1_cracked_n2]))
+print(sentence.alts)
+# print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
+# print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 
 
 # %%
