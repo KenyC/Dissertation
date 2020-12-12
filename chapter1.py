@@ -18,6 +18,25 @@ options.latex_display = False  # disabling LateX display ; you can enable if you
 display = jprint if options.latex_display else print
 options_alts.scales   = [{Existential, Universal}, {Existential, Most}] # Remove "or"/"and" scale; we'll be using disjunction to model existentials without universal alternatives
 
+# setting a and b to depend on x (innocuous warnings appear)
+# here, we only use thee disjuncts ; the number of logical possibility can quickly explode
+a("x")
+b("x")
+c("x")
+
+# Match names in text
+Anut  = A("nut")
+Enut  = E("nut")
+scrat = Pred(4, name = "scrat", depends = "nut")
+acorn = Pred(5, name = "acorn", depends = "nut")
+waggs = Pred(6, name = "waggs", depends = "nut")
+
+Aamb  = A("amb")
+Eamb  = E("amb")
+arabic   = Pred(4, name = "arabic",   depends = "amb")
+english  = Pred(5, name = "english",  depends = "amb")
+mandarin = Pred(6, name = "mandarin", depends = "amb")
+
 
 # %%
 """
@@ -67,18 +86,16 @@ sentence.diagnose(display)
 # %%
 """
 <span id="cumulative_every_naive"></span>
-# Cumulative reading of every : non-recursive exhaustification
+# Cumulative reading of every/distributive implicatures : non-recursive exhaustification
+*Every ambassador speaks Arabic, French or Mandarin*  
+*The three squirrels cracked every nut*
 
 Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla & Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
 """
 
-# setting a and b to depend on x (innocuous warnings appear)
-# here, we only use thee disjuncts ; the number of logical possibility can quickly explode
-a("x")
-b("x")
-c("x")
 
-prejacent  = Ax > a | b | c
+
+prejacent  = Anut > scrat | acorn | waggs
 universe   = Universe(f = prejacent)
 sentence   = Exh(prejacent, scales = []) # we must ignore the "some/all" scales. As p
 
@@ -87,33 +104,145 @@ print("Assumed LF:", sentence)
 sentence.diagnose(display)
 print(
 	"There is a nut that only Scrat cracked:", 
-	universe.entails(sentence, Ex > a & ~b & ~c)
+	universe.entails(sentence, Enut > scrat & ~acorn & ~waggs)
 )
 print(
-	"Equivalent to cumulative reading:", 
+	"Equivalent to true cumulative reading:", 
 	universe.equivalent(
 		sentence, 
-		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+		prejacent & (Enut > scrat) & (Enut > acorn) & (Enut > waggs)
 	)
 )
+
+# %%
+"""
+<span id="dist_ii"></span>
+# Distributive implicature/cumulative readings of "every" : innocent exclusion exhaustification
+*Every ambassador speaks Arabic, French or Mandarin*  
+*The three squirrels cracked every nut*
+
+Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla & Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
+Because II exhaustification embeds IE exhaustification, the results are the same.
+"""
+
+prejacent  = Ax > a | b | c
+universe   = Universe(f = prejacent)
+sentence   = Exh(prejacent, scales = [], ii = True) # here too, we must ignore the "some/all" scales. As p
+
+print("Assumed LF:", sentence)
+
+# Since exclusion happens first, the derived result is the same as above
+sentence.diagnose(display)
+print(
+	"There is a nut that only Scrat cracked:", 
+	universe.entails(sentence, Ex > a & ~b & ~c)
+)
+
+dist = (Ex > a) & (Ex > b) & (Ex > c)
+print("Equivalent to prejacent + dist implicatures (i.e. {}):".format(dist))
+print(
+	universe.equivalent(
+		sentence, 
+		prejacent & dist
+	)
+)
+print()
+
+# %% 
+"""
+What if we allowed the "some" alternative to "all"? The reading is equivalent to the following conjuntive statement:  
+*Every ambassador speaks Arabic, English and Mandarin.*
+"""
+sentence = Exh(prejacent, 
+               scales = [{Existential, Universal}],
+               ii     = True)
+sentence.diagnose(display) 
+# The reading is way too strong!
+print(
+	"Equivalent to doubly distributive reading:", 
+	universe.equivalent(
+		sentence, 
+		Ax > a & b & c
+	)
+)
+
+
+# %%
+"""
+<span id="dist_ii_conj"></span>
+What if we allowed both "some/all" and "or/and"?
+Here, we generated an embedded implicature that "every ambassador speaks only one of the three languages" and no distributive implicature.
+Note that pruning alternatives here (if we follow Bar-Lev (2018)) since pruning in his system only makes statements weaker.
+Since the fully exhuastified statement does not entail the dist. implicature, the pruned statement won't either.
+"""
+
+sentence = Exh(prejacent, 
+               scales = [{Existential, Universal},  {Or, And}],
+               ii     = True)
+sentence.diagnose(display) 
+# The reading has an embedded implicature
+print(
+	"Equivalent to embeded implicature:", 
+	universe.equivalent(
+		sentence, 
+		Ax > (a & ~b & ~c) | (~a & b & ~c) | (~a & ~b & c)
+	)
+)
+
+print(
+	"Has distributive implicature:", 
+	universe.equivalent(
+		sentence, 
+		Ex > a
+	)
+)
+
+
+
+# %%
+"""
+<span id="dist_recursive"></span>
+# Distributive implicatures with recursive exhaustification 
+"""
+
+prejacent  = Ax > a | b | c
+universe = Universe(f = prejacent)
+sentence   = Exh(Exh(prejacent, subst = True), subst = True)
+
+print("Assumed LF:", sentence)
+
+sentence.diagnose(display)
+
+dist = (Ex > a) & (Ex > b) & (Ex > c)
+print("Target Distributive Implicatures:", dist)
+print(
+	"Equivalent to conjunction of prejacent and dist implicature:", 
+	universe.equivalent(
+		sentence, 
+		prejacent & dist
+	)
+)
+
 # %%
 """
 <span id="cumulative_every"></span>
 # Cumulative reading of every 
 """
 
-prejacent  = Ax > a | b | c
+
+
+prejacent  = Anut > scrat | acorn | waggs
 universe = Universe(f = prejacent)
 sentence   = Exh(Exh(prejacent))
 
 print("Assumed LF:", sentence)
 
-sentence.diagnose(display)
+sentence.diagnose(print)
 print(
 	"Equivalent to cumulative reading:", 
 	universe.equivalent(
 		sentence, 
-		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+		prejacent & (Enut > scrat) & (Enut > acorn) & (Enut > waggs)
 	)
 )
 
@@ -125,11 +254,18 @@ print(
 
 prejacent  = Ax > a | b | c
 sentence   = Exh(prejacent, ii = True)
+universe = Universe(f = prejacent)
 
 print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
-print("Equivalent to cumulative reading:          ", universe.equivalent(sentence, prejacent & (Ex > a) & (Ex > b) & (Ex > c)))
+print(
+	"Equivalent to cumulative reading:          ", 
+	universe.equivalent(
+		sentence, 
+		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+	)
+)
 print("Equivalent to doubly-distributive reading: ", universe.equivalent(sentence, (Ax > a) & (Ax > b) & (Ax > c)))
 
 # %%
