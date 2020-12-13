@@ -119,6 +119,7 @@ print(
 	)
 )
 
+
 # %%
 """
 <span id="dist_ii"></span>
@@ -129,6 +130,7 @@ print(
 Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla & Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
 Because II exhaustification embeds IE exhaustification, the results are the same.
 """
+
 
 prejacent  = Aamb > arabic | english | mandarin
 universe   = Universe(f = prejacent)
@@ -153,11 +155,12 @@ print(
 )
 print()
 
-# %% 
+# %%
 """
 What if we allowed the "some" alternative to "all"? The reading is equivalent to the following conjuntive statement:  
 *Every ambassador speaks Arabic, English and Mandarin.*
 """
+
 sentence = Exh(prejacent, 
                scales = [{Existential, Universal}],
                ii     = True)
@@ -345,6 +348,7 @@ print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distr
 # %%
 """
 <span id="schein"></span>
+# Schein's video-game example
 *The video-games taught every quarterback two new plays.*
 
 Here, we will work on small domains to avoid blowing up the computer

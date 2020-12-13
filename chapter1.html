@@ -13261,28 +13261,49 @@ div#notebook {
 <h1 id="Distributive-implicature/cumulative-readings-of-&quot;every&quot;-:-innocent-exclusion-exhaustification">Distributive implicature/cumulative readings of "every" : innocent exclusion exhaustification<a class="anchor-link" href="#Distributive-implicature/cumulative-readings-of-&quot;every&quot;-:-innocent-exclusion-exhaustification">&#182;</a></h1><p><em>Every ambassador speaks Arabic, French or Mandarin</em><br>
 <em>The three squirrels cracked every nut</em></p>
 <p>Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla &amp; Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
-Because II exhaustification embeds IE exhaustification, the results are the same.
-"""</p>
-<p>prejacent  = Aamb &gt; arabic | english | mandarin
-universe   = Universe(f = prejacent)
-sentence   = Exh(prejacent, scales = [], ii = True) # here too, we must ignore the "some/all" scales. As p</p>
-<p>print("Assumed LF:", sentence)</p>
-<h1 id="Since-exclusion-happens-first,-the-derived-result-is-the-same-as-above">Since exclusion happens first, the derived result is the same as above<a class="anchor-link" href="#Since-exclusion-happens-first,-the-derived-result-is-the-same-as-above">&#182;</a></h1><p>sentence.diagnose(display)
-print(
-    "There is an ambassador that only speaks English:", 
-    universe.entails(sentence, Eamb &gt; english &amp; ~arabic &amp; ~mandarin)
-)</p>
-<p>dist = (Eamb &gt; english) &amp; (Eamb &gt; arabic) &amp; (Eamb &gt; mandarin)
-print(
-    "Equivalent to reported distributive implicature:", 
-    universe.equivalent(
-        sentence, 
-        prejacent &amp; dist
-    )
-)
-print()</p>
-<h1 id="%%">%%<a class="anchor-link" href="#%%">&#182;</a></h1><p>"""
-What if we allowed the "some" alternative to "all"? The reading is equivalent to the following conjuntive statement:<br>
+Because II exhaustification embeds IE exhaustification, the results are the same.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Aamb</span> <span class="o">&gt;</span> <span class="n">arabic</span> <span class="o">|</span> <span class="n">english</span> <span class="o">|</span> <span class="n">mandarin</span>
+<span class="n">universe</span>   <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
+<span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">,</span> <span class="n">scales</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">ii</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># here too, we must ignore the &quot;some/all&quot; scales. As p</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+
+<span class="c1"># Since exclusion happens first, the derived result is the same as above</span>
+<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+	<span class="s2">&quot;There is an ambassador that only speaks English:&quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">entails</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">english</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">arabic</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mandarin</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">english</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">arabic</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">mandarin</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+	<span class="s2">&quot;Equivalent to reported distributive implicature:&quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
+		<span class="n">sentence</span><span class="p">,</span> 
+		<span class="n">prejacent</span> <span class="o">&amp;</span> <span class="n">dist</span>
+	<span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What if we allowed the "some" alternative to "all"? The reading is equivalent to the following conjuntive statement:<br>
 <em>Every ambassador speaks Arabic, English and Mandarin.</em></p>
 
 </div>
@@ -13569,8 +13590,8 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><span id="schein"></span>
-<em>The video-games taught every quarterback two new plays.</em></p>
+<p><span id="schein"></span></p>
+<h1 id="Schein's-video-game-example">Schein's video-game example<a class="anchor-link" href="#Schein's-video-game-example">&#182;</a></h1><p><em>The video-games taught every quarterback two new plays.</em></p>
 <p>Here, we will work on small domains to avoid blowing up the computer</p>
 
 </div>
