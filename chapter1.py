@@ -8,35 +8,44 @@ Some global preliminaries
 
 """
 # Imports 
-from exh           import *
-from exh.exts.gq   import *
+from exh                  import *
+from exh.exts.gq          import *
+from exh.exts.subdomain   import *
 from exh.model     import options
 import exh.options as     options_alts
 
 options.dom_quant     = 4      # Setting a large-ish domain of quantification
 options.latex_display = False  # disabling LateX display ; you can enable if you're using Jupyter Notebook (as opposed to IPython) 
 display = jprint if options.latex_display else print
-options_alts.scales   = [{Existential, Universal}, {Existential, Most}] # Remove "or"/"and" scale; we'll be using disjunction to model existentials without universal alternatives
+options_alts.scales = ListScales([
+	SimpleScales([{Existential, Universal}, {Existential, Most}]),  # Remove "or"/"and" scale; we'll be using disjunction to model existentials without universal alternatives
+	sub_scale # sub-domain alternatives
+])
 
-# setting a and b to depend on x (innocuous warnings appear)
-# here, we only use thee disjuncts ; the number of logical possibility can quickly explode
-a("x")
-b("x")
-c("x")
+# %%
+"""
+Defining predicates and quantifiers that match the name in the text:
+"""
 
 # Match names in text
 Anut  = A("nut")
 Enut  = E("nut")
-scrat = Pred(4, name = "scrat", depends = "nut")
-acorn = Pred(5, name = "acorn", depends = "nut")
-waggs = Pred(6, name = "waggs", depends = "nut")
+Esquirrel = Ec_("squirrel", domain = D3) # An existential with subdomain alternatives over a domain of size 3
+Asquirrel = A("squirrel", domain = D3)   # The corresponding universal for good measure
+cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (D3, default_domain))
+# scrat = Pred(name = "scrat", depends = "nut")
+# acorn = Pred(name = "acorn", depends = "nut")
+# waggs = Pred(name = "waggs", depends = "nut")
 
 Aamb  = A("amb")
 Eamb  = E("amb")
-arabic   = Pred(4, name = "arabic",   depends = "amb")
-english  = Pred(5, name = "english",  depends = "amb")
-mandarin = Pred(6, name = "mandarin", depends = "amb")
+arabic   = Pred(name = "arabic",   depends = "amb")
+english  = Pred(name = "english",  depends = "amb")
+mandarin = Pred(name = "mandarin", depends = "amb")
 
+Edancer = Ec_("dancer", domain = Domain(5)) 
+Adancer = A("dancer", domain = Domain(5))
+smiled  = Pred(name = "smiled", depends = "dancer", domains = [Domain(5)])
 
 # %%
 """
@@ -45,24 +54,18 @@ mandarin = Pred(6, name = "mandarin", depends = "amb")
 *The dancers smiled*
 """
 
-# Here, we model the dancers as a grand disjunction
-marielou = Pred(5, name = "marielou")
-pierre   = Pred(6, name = "pierre")
-rebecca  = Pred(7, name = "rebecca")
-wilfried = Pred(8, name = "wilfried")
-nazli    = Pred(9, name = "nazli")
-# dancers  = [marielou, pierre, rebecca, wilfried, nazli]
 
-prejacent = marielou | pierre | rebecca | wilfried | nazli
+prejacent = Edancer > smiled # there is a dancer that smiled
 universe = Universe(f = prejacent) # Universe objects contain all logical possibilities ; we can use them to check for equivalences
 sentence  = Exh(Exh(prejacent))
+# The combination of dots and circles on the quantifier represent the domain of the existential quantifier: dots are individuals outside the domain, circle individuals inside
 print("Assumed sentence:", sentence)
+sentence.diagnose(display)
 print(
-	"Equivalent to universal/grand conjunction:", 
-	universe.equivalent(sentence, marielou & pierre & rebecca & wilfried & nazli)
+	"Equivalent to universal:", 
+	universe.equivalent(sentence, Adancer > smiled)
 )
 # Printing excluded alternatives
-sentence.diagnose(display)
 
 # %%
 """
@@ -72,16 +75,16 @@ sentence.diagnose(display)
 """
 
 
-prejacent = marielou | pierre | rebecca | wilfried | nazli
+prejacent = Edancer > smiled # there is a dancer that smiled
 universe = Universe(f = prejacent) # Universe objects contain all logical possibilities ; we can use them to check for equivalences
 sentence  = Exh(prejacent, ii = True)
 print("Assumed sentence:", sentence)
+sentence.diagnose(display)
 print(
-	"Equivalent to universal/grand conjunction:", 
-	universe.equivalent(sentence, marielou & pierre & rebecca & wilfried & nazli)
+	"Equivalent to universal:", 
+	universe.equivalent(sentence, Adancer > smiled)
 )
 # Printing excluded alternatives
-sentence.diagnose(display)
 
 # %%
 """
@@ -95,7 +98,7 @@ Note how we perform the exhaustification, ignoring that "every" has "some" as an
 
 
 
-prejacent  = Anut > scrat | acorn | waggs
+prejacent  = Aamb > arabic | english | mandarin
 universe   = Universe(f = prejacent)
 sentence   = Exh(prejacent, scales = []) # we must ignore the "some/all" scales. As p
 
@@ -103,14 +106,16 @@ print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
 print(
-	"There is a nut that only Scrat cracked:", 
-	universe.entails(sentence, Enut > scrat & ~acorn & ~waggs)
+	"There is an ambassador that only speaks English:", 
+	universe.entails(sentence, Eamb > english & ~arabic & ~mandarin)
 )
+
+dist = (Eamb > english) & (Eamb > arabic) & (Eamb > mandarin)
 print(
-	"Equivalent to true cumulative reading:", 
+	"Equivalent to reported distributive implicature:", 
 	universe.equivalent(
 		sentence, 
-		prejacent & (Enut > scrat) & (Enut > acorn) & (Enut > waggs)
+		prejacent & dist
 	)
 )
 
@@ -125,7 +130,7 @@ Note how we perform the exhaustification, ignoring that "every" has "some" as an
 Because II exhaustification embeds IE exhaustification, the results are the same.
 """
 
-prejacent  = Ax > a | b | c
+prejacent  = Aamb > arabic | english | mandarin
 universe   = Universe(f = prejacent)
 sentence   = Exh(prejacent, scales = [], ii = True) # here too, we must ignore the "some/all" scales. As p
 
@@ -134,13 +139,13 @@ print("Assumed LF:", sentence)
 # Since exclusion happens first, the derived result is the same as above
 sentence.diagnose(display)
 print(
-	"There is a nut that only Scrat cracked:", 
-	universe.entails(sentence, Ex > a & ~b & ~c)
+	"There is an ambassador that only speaks English:", 
+	universe.entails(sentence, Eamb > english & ~arabic & ~mandarin)
 )
 
-dist = (Ex > a) & (Ex > b) & (Ex > c)
-print("Equivalent to prejacent + dist implicatures (i.e. {}):".format(dist))
+dist = (Eamb > english) & (Eamb > arabic) & (Eamb > mandarin)
 print(
+	"Equivalent to reported distributive implicature:", 
 	universe.equivalent(
 		sentence, 
 		prejacent & dist
@@ -159,10 +164,10 @@ sentence = Exh(prejacent,
 sentence.diagnose(display) 
 # The reading is way too strong!
 print(
-	"Equivalent to doubly distributive reading:", 
+	"All ambassador speak all languages:", 
 	universe.equivalent(
 		sentence, 
-		Ax > a & b & c
+		Aamb > arabic & english & mandarin
 	)
 )
 
@@ -182,10 +187,10 @@ sentence = Exh(prejacent,
 sentence.diagnose(display) 
 # The reading has an embedded implicature
 print(
-	"Equivalent to embeded implicature:", 
+	"Equivalent to an embedded implicature:", 
 	universe.equivalent(
 		sentence, 
-		Ax > (a & ~b & ~c) | (~a & b & ~c) | (~a & ~b & c)
+		Aamb > (arabic & ~english & ~mandarin) | (~arabic & english & ~mandarin) | (~arabic & ~english & mandarin)
 	)
 )
 
@@ -193,7 +198,7 @@ print(
 	"Has distributive implicature:", 
 	universe.equivalent(
 		sentence, 
-		Ex > a
+		Eamb > arabic
 	)
 )
 
@@ -205,15 +210,15 @@ print(
 # Distributive implicatures with recursive exhaustification 
 """
 
-prejacent  = Ax > a | b | c
+prejacent  = Aamb > arabic | english | mandarin
 universe = Universe(f = prejacent)
-sentence   = Exh(Exh(prejacent, subst = True), subst = True)
+sentence   = Exh(Exh(prejacent))
 
 print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
 
-dist = (Ex > a) & (Ex > b) & (Ex > c)
+dist = (Eamb > english) & (Eamb > arabic) & (Eamb > mandarin)
 print("Target Distributive Implicatures:", dist)
 print(
 	"Equivalent to conjunction of prejacent and dist implicature:", 
@@ -227,22 +232,26 @@ print(
 """
 <span id="cumulative_every"></span>
 # Cumulative reading of every 
+
+This is exactly the same as above with disjunction replaced with sub-domain existentials
 """
 
 
 
-prejacent  = Anut > scrat | acorn | waggs
-universe = Universe(f = prejacent)
+prejacent  = Anut > Esquirrel > cracked
+universe   = Universe(f = prejacent)
 sentence   = Exh(Exh(prejacent))
 
 print("Assumed LF:", sentence)
 
-sentence.diagnose(print)
+sentence.diagnose(display)
+cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
+print("Cumulative reading:", cumulative_reading)
 print(
 	"Equivalent to cumulative reading:", 
 	universe.equivalent(
 		sentence, 
-		prejacent & (Enut > scrat) & (Enut > acorn) & (Enut > waggs)
+		cumulative_reading
 	)
 )
 
@@ -252,35 +261,43 @@ print(
 # Cumulative reading of every: the innocent inclusion approach 
 """
 
-prejacent  = Ax > a | b | c
+prejacent  = Anut > Esquirrel > cracked
 sentence   = Exh(prejacent, ii = True)
 universe = Universe(f = prejacent)
 
 print("Assumed LF:", sentence)
 
 sentence.diagnose(display)
+cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
+print("Cumulative reading:", cumulative_reading)
 print(
-	"Equivalent to cumulative reading:          ", 
+	"Equivalent to cumulative reading:", 
 	universe.equivalent(
 		sentence, 
-		prejacent & (Ex > a) & (Ex > b) & (Ex > c)
+		cumulative_reading
 	)
 )
-print("Equivalent to doubly-distributive reading: ", universe.equivalent(sentence, (Ax > a) & (Ax > b) & (Ax > c)))
+doubly_distributive = Asquirrel > Anut > cracked
+print("Doubly distributive reading:", doubly_distributive)
+print(
+	"Equivalent to doubly-distributive reading: ", 
+	universe.equivalent(sentence, doubly_distributive)
+)
 
 # %%
 """
 <span id="cumulative_most"></span>
 # Cumulative reading of most 
 """
-prejacent  = Mx > a | b | c
-first_exh  = Exh(prejacent)
-lf         = Exh(first_exh)
+prejacent  = M("nut") > Esquirrel > cracked
+universe = Universe(f = prejacent)
+lf = Exh(Exh(prejacent))
+
 
 print("Assumed LF:", lf)
 
 lf.diagnose(display)
-print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (Ex > a) & (Ex > b) & (Ex > c)))
+print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (Asquirrel > Enut > cracked)))
 
 
 
@@ -292,14 +309,14 @@ print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (
 # Asymmetries in cumulative readings 
 Non-cumulative reading of every.
 """
-
-scales     = [{Existential, Universal}] # our "disjunction", which models the existential with subdomain alternates, should not have a conjunctive alternative
-lf         = Exh(Exh(Ax > Exh(Exh(a | b))))
+lf         = Exh(Exh(Anut > Exh(Exh(Esquirrel > cracked))))
+universe = Universe(f = lf)
 print("Assumed LF:", lf)
 
 
 
 lf.diagnose(display)
+cumulative_reading = 
 print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
 print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 
@@ -307,18 +324,50 @@ print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 """
 <span id="asymmetries"></span>
 # Asymmetries in cumulative readings 
-Non-cumulative reading of every.
+*Every nut appealed to the squirrels*
+
+With 4 Exh, the computations get a bit slow. It takes 3-5s on my computer.
 """
 
 scales     = [{Existential, Universal}] # our "disjunction", which models the existential with subdomain alternates, should not have a conjunctive alternative
-lf         = Exh(Exh(Ax > Exh(Exh(a | b))))
+lf         = Exh(Exh(Anut > Exh(Exh(Esquirrel > cracked))))
+universe = Universe(f = lf)
+
+
 print("Assumed LF:", lf)
+lf.diagnose(display)
 
+cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
+print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
+doubly_distributive = Asquirrel > Anut > cracked
+print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
 
+# %%
+"""
+<span id="schein"></span>
+*The video-games taught every quarterback two new plays.*
+
+Here, we will work on small domains to avoid blowing up the computer
+"""
+
+D2 = Domain(2)
+Evideo       = Ec_("vg",  domain = D2)
+Avideo       = A("vg",    domain = D2)
+Aquarterback = A("qb",    domain = D2)
+Equarterback = E("qb",    domain = D2)
+two_plays    = M("play",  domain = D3) # using most which is equivalent to two on that domain
+Eplay        = E("play",  domain = D3) # using most which is equivalent to two on that domain
+taught       = Pred(name = "taught", depends = ["vg", "qb", "play"], domains = [D2, D2, D3])
+
+prejacent = Aquarterback > two_plays > (Evideo > taught) # Little problem with C constructor requires parenthesis to parse
+print(prejacent)
+lf = Exh(Exh(prejacent))
+universe = Universe(f = lf)
 
 lf.diagnose(display)
-print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
-print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
+
+cumulative_reading = prejacent & (Avideo > Equarterback > (Eplay > taught))
+print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
 
 # %%
 """
@@ -326,17 +375,70 @@ print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 # Ordinary cumulative sentences 
 Ordinary cumulative sentences  
 *The squirrels cracked the nuts*
+
+**Caution:** This is by far the most computation-greedy cells of the notebook. Takes 30s to 1min to run on my (old) computer.
 """
 
-s1_cracked_n1 = Pred(1, name = "s1 cracked n1")
-s1_cracked_n2 = Pred(2, name = "s2 cracked n1")
-s2_cracked_n1 = Pred(3, name = "s1 cracked n2")
-s2_cracked_n2 = Pred(4, name = "s2 cracked n2")
+# We need to redefine the quantifier 
+Enut = Ec_("nut", domain = D3)   
+Anut = A("nut",   domain = D3)   
+Esquirrel = Ec_("squirrel", domain = D3) 
+Asquirrel = A("squirrel",   domain = D3)   
+cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (D3, D3))
+lf      = Exh(Exh(Exh(Exh(Enut > Esquirrel > cracked))))
+universe = Universe(f = lf)
 
 
-sentence = Exh(Exh(s1_cracked_n1, alts = [s1_cracked_n2]))
-print(sentence.alts)
-# print("Equivalent to cumulative reading:", universe.equivalent(lf, (Ax > a | b) & (Ex > a) & (Ex > b)))
+
+print("Assumed LF:", lf)
+lf.diagnose(display)
+
+cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
+print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
+doubly_distributive = Asquirrel > Anut > cracked
+print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
+
+# %%
+"""
+Does it not work? Well, notice how none of the alterantives considered by *Exh* have any of the *Exh* stripped away.
+The package implements this behavior by default. If we allow the prejacent of Exh to be an alternative to Exh, the account of Free choice is lost!
+"""
+
+options_alts.prejacent_alternative_to_exh = True
+free_choice = Exh(Exh(a | b))
+universe = Universe(f = free_choice)
+options_alts.prejacent_alternative_to_exh = False
+
+free_choice.diagnose(display)
+print("No strengthening:", universe.equivalent(free_choice, a | b))
+
+# %%
+"""
+Is that an issue? Maybe we need to consider recursive *Exh* (i.e. *Exh Exh*) as a unit. As a unit, *Exh Exh* does not have *Exh* as an alternative, but it does have its prejacent as an alternative.
+"""
+
+Enut = Ec_("nut", domain = D3)   
+Anut = A("nut",   domain = D3)   
+Esquirrel = Ec_("squirrel", domain = D3) 
+Asquirrel = A("squirrel",   domain = D3)   
+cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (D3, D3))
+lf      = Exh(Exh(
+	Enut > Exh(Exh(Esquirrel > cracked)),
+	extra_alts = Exh(Enut > Esquirrel > cracked).alts
+))
+universe = Universe(f = lf)
+
+
+
+print("Assumed LF:", lf)
+lf.diagnose(display)
+
+cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
+print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
+doubly_distributive = Asquirrel > Anut > cracked
+print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
+
+
 # print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 
 

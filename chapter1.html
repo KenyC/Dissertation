@@ -13089,34 +13089,58 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Imports </span>
-<span class="kn">from</span> <span class="nn">exh</span>           <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">exh.exts.gq</span>   <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">exh</span>                  <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">exh.exts.gq</span>          <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">exh.exts.subdomain</span>   <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">exh.model</span>     <span class="kn">import</span> <span class="n">options</span>
 <span class="kn">import</span> <span class="nn">exh.options</span> <span class="k">as</span>     <span class="nn">options_alts</span>
 
 <span class="n">options</span><span class="o">.</span><span class="n">dom_quant</span>     <span class="o">=</span> <span class="mi">4</span>      <span class="c1"># Setting a large-ish domain of quantification</span>
 <span class="n">options</span><span class="o">.</span><span class="n">latex_display</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># disabling LateX display ; you can enable if you&#39;re using Jupyter Notebook (as opposed to IPython) </span>
 <span class="n">display</span> <span class="o">=</span> <span class="n">jprint</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">latex_display</span> <span class="k">else</span> <span class="nb">print</span>
-<span class="n">options_alts</span><span class="o">.</span><span class="n">scales</span>   <span class="o">=</span> <span class="p">[{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Universal</span><span class="p">},</span> <span class="p">{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Most</span><span class="p">}]</span> <span class="c1"># Remove &quot;or&quot;/&quot;and&quot; scale; we&#39;ll be using disjunction to model existentials without universal alternatives</span>
+<span class="n">options_alts</span><span class="o">.</span><span class="n">scales</span> <span class="o">=</span> <span class="n">ListScales</span><span class="p">([</span>
+	<span class="n">SimpleScales</span><span class="p">([{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Universal</span><span class="p">},</span> <span class="p">{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Most</span><span class="p">}]),</span>  <span class="c1"># Remove &quot;or&quot;/&quot;and&quot; scale; we&#39;ll be using disjunction to model existentials without universal alternatives</span>
+	<span class="n">sub_scale</span> <span class="c1"># sub-domain alternatives</span>
+<span class="p">])</span>
+</pre></div>
 
-<span class="c1"># setting a and b to depend on x (innocuous warnings appear)</span>
-<span class="c1"># here, we only use thee disjuncts ; the number of logical possibility can quickly explode</span>
-<span class="n">a</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-<span class="n">b</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-<span class="n">c</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    </div>
+</div>
+</div>
 
-<span class="c1"># Match names in text</span>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Defining predicates and quantifiers that match the name in the text:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Match names in text</span>
 <span class="n">Anut</span>  <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">)</span>
 <span class="n">Enut</span>  <span class="o">=</span> <span class="n">E</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">)</span>
-<span class="n">scrat</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scrat&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;nut&quot;</span><span class="p">)</span>
-<span class="n">acorn</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;acorn&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;nut&quot;</span><span class="p">)</span>
-<span class="n">waggs</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;waggs&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;nut&quot;</span><span class="p">)</span>
+<span class="n">Esquirrel</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span> <span class="c1"># An existential with subdomain alternatives over a domain of size 3</span>
+<span class="n">Asquirrel</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   <span class="c1"># The corresponding universal for good measure</span>
+<span class="n">cracked</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cracked&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="s2">&quot;nut&quot;</span><span class="p">],</span> <span class="n">domains</span> <span class="o">=</span> <span class="p">(</span><span class="n">D3</span><span class="p">,</span> <span class="n">default_domain</span><span class="p">))</span>
+<span class="c1"># scrat = Pred(name = &quot;scrat&quot;, depends = &quot;nut&quot;)</span>
+<span class="c1"># acorn = Pred(name = &quot;acorn&quot;, depends = &quot;nut&quot;)</span>
+<span class="c1"># waggs = Pred(name = &quot;waggs&quot;, depends = &quot;nut&quot;)</span>
 
 <span class="n">Aamb</span>  <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;amb&quot;</span><span class="p">)</span>
 <span class="n">Eamb</span>  <span class="o">=</span> <span class="n">E</span><span class="p">(</span><span class="s2">&quot;amb&quot;</span><span class="p">)</span>
-<span class="n">arabic</span>   <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;arabic&quot;</span><span class="p">,</span>   <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
-<span class="n">english</span>  <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;english&quot;</span><span class="p">,</span>  <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
-<span class="n">mandarin</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mandarin&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
+<span class="n">arabic</span>   <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;arabic&quot;</span><span class="p">,</span>   <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
+<span class="n">english</span>  <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;english&quot;</span><span class="p">,</span>  <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
+<span class="n">mandarin</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mandarin&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;amb&quot;</span><span class="p">)</span>
+
+<span class="n">Edancer</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;dancer&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> 
+<span class="n">Adancer</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;dancer&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">Domain</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">smiled</span>  <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;smiled&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="s2">&quot;dancer&quot;</span><span class="p">,</span> <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="n">Domain</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
 </pre></div>
 
     </div>
@@ -13138,24 +13162,17 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Here, we model the dancers as a grand disjunction</span>
-<span class="n">marielou</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;marielou&quot;</span><span class="p">)</span>
-<span class="n">pierre</span>   <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pierre&quot;</span><span class="p">)</span>
-<span class="n">rebecca</span>  <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rebecca&quot;</span><span class="p">)</span>
-<span class="n">wilfried</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;wilfried&quot;</span><span class="p">)</span>
-<span class="n">nazli</span>    <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;nazli&quot;</span><span class="p">)</span>
-<span class="c1"># dancers  = [marielou, pierre, rebecca, wilfried, nazli]</span>
-
-<span class="n">prejacent</span> <span class="o">=</span> <span class="n">marielou</span> <span class="o">|</span> <span class="n">pierre</span> <span class="o">|</span> <span class="n">rebecca</span> <span class="o">|</span> <span class="n">wilfried</span> <span class="o">|</span> <span class="n">nazli</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span> <span class="o">=</span> <span class="n">Edancer</span> <span class="o">&gt;</span> <span class="n">smiled</span> <span class="c1"># there is a dancer that smiled</span>
 <span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span> <span class="c1"># Universe objects contain all logical possibilities ; we can use them to check for equivalences</span>
 <span class="n">sentence</span>  <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">))</span>
+<span class="c1"># The combination of dots and circles on the quantifier represent the domain of the existential quantifier: dots are individuals outside the domain, circle individuals inside</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed sentence:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to universal/grand conjunction:&quot;</span><span class="p">,</span> 
-	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">marielou</span> <span class="o">&amp;</span> <span class="n">pierre</span> <span class="o">&amp;</span> <span class="n">rebecca</span> <span class="o">&amp;</span> <span class="n">wilfried</span> <span class="o">&amp;</span> <span class="n">nazli</span><span class="p">)</span>
+	<span class="s2">&quot;Equivalent to universal:&quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">Adancer</span> <span class="o">&gt;</span> <span class="n">smiled</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="c1"># Printing excluded alternatives</span>
-<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13177,16 +13194,16 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span> <span class="o">=</span> <span class="n">marielou</span> <span class="o">|</span> <span class="n">pierre</span> <span class="o">|</span> <span class="n">rebecca</span> <span class="o">|</span> <span class="n">wilfried</span> <span class="o">|</span> <span class="n">nazli</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span> <span class="o">=</span> <span class="n">Edancer</span> <span class="o">&gt;</span> <span class="n">smiled</span> <span class="c1"># there is a dancer that smiled</span>
 <span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span> <span class="c1"># Universe objects contain all logical possibilities ; we can use them to check for equivalences</span>
 <span class="n">sentence</span>  <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">,</span> <span class="n">ii</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed sentence:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to universal/grand conjunction:&quot;</span><span class="p">,</span> 
-	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">marielou</span> <span class="o">&amp;</span> <span class="n">pierre</span> <span class="o">&amp;</span> <span class="n">rebecca</span> <span class="o">&amp;</span> <span class="n">wilfried</span> <span class="o">&amp;</span> <span class="n">nazli</span><span class="p">)</span>
+	<span class="s2">&quot;Equivalent to universal:&quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">Adancer</span> <span class="o">&gt;</span> <span class="n">smiled</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="c1"># Printing excluded alternatives</span>
-<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13210,7 +13227,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">scrat</span> <span class="o">|</span> <span class="n">acorn</span> <span class="o">|</span> <span class="n">waggs</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Aamb</span> <span class="o">&gt;</span> <span class="n">arabic</span> <span class="o">|</span> <span class="n">english</span> <span class="o">|</span> <span class="n">mandarin</span>
 <span class="n">universe</span>   <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
 <span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">,</span> <span class="n">scales</span> <span class="o">=</span> <span class="p">[])</span> <span class="c1"># we must ignore the &quot;some/all&quot; scales. As p</span>
 
@@ -13218,14 +13235,16 @@ div#notebook {
 
 <span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;There is a nut that only Scrat cracked:&quot;</span><span class="p">,</span> 
-	<span class="n">universe</span><span class="o">.</span><span class="n">entails</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">scrat</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">acorn</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">waggs</span><span class="p">)</span>
+	<span class="s2">&quot;There is an ambassador that only speaks English:&quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">entails</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">english</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">arabic</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mandarin</span><span class="p">)</span>
 <span class="p">)</span>
+
+<span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">english</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">arabic</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">mandarin</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to true cumulative reading:&quot;</span><span class="p">,</span> 
+	<span class="s2">&quot;Equivalent to reported distributive implicature:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">scrat</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">acorn</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">waggs</span><span class="p">)</span>
+		<span class="n">prejacent</span> <span class="o">&amp;</span> <span class="n">dist</span>
 	<span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -13244,18 +13263,18 @@ div#notebook {
 <p>Note how we perform the exhaustification, ignoring that "every" has "some" as an alternative. As pointed out by Chemla &amp; Spector (2011), the "some" alternative block the distributive implicature, a testament to the inadequacy of the standard derivation.
 Because II exhaustification embeds IE exhaustification, the results are the same.
 """</p>
-<p>prejacent  = Ax &gt; a | b | c
+<p>prejacent  = Aamb &gt; arabic | english | mandarin
 universe   = Universe(f = prejacent)
 sentence   = Exh(prejacent, scales = [], ii = True) # here too, we must ignore the "some/all" scales. As p</p>
 <p>print("Assumed LF:", sentence)</p>
 <h1 id="Since-exclusion-happens-first,-the-derived-result-is-the-same-as-above">Since exclusion happens first, the derived result is the same as above<a class="anchor-link" href="#Since-exclusion-happens-first,-the-derived-result-is-the-same-as-above">&#182;</a></h1><p>sentence.diagnose(display)
 print(
-    "There is a nut that only Scrat cracked:", 
-    universe.entails(sentence, Ex &gt; a &amp; ~b &amp; ~c)
+    "There is an ambassador that only speaks English:", 
+    universe.entails(sentence, Eamb &gt; english &amp; ~arabic &amp; ~mandarin)
 )</p>
-<p>dist = (Ex &gt; a) &amp; (Ex &gt; b) &amp; (Ex &gt; c)
-print("Equivalent to prejacent + dist implicatures (i.e. {}):".format(dist))
+<p>dist = (Eamb &gt; english) &amp; (Eamb &gt; arabic) &amp; (Eamb &gt; mandarin)
 print(
+    "Equivalent to reported distributive implicature:", 
     universe.equivalent(
         sentence, 
         prejacent &amp; dist
@@ -13280,10 +13299,10 @@ What if we allowed the "some" alternative to "all"? The reading is equivalent to
 <span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span> 
 <span class="c1"># The reading is way too strong!</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to doubly distributive reading:&quot;</span><span class="p">,</span> 
+	<span class="s2">&quot;All ambassador speak all languages:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span> <span class="o">&amp;</span> <span class="n">c</span>
+		<span class="n">Aamb</span> <span class="o">&gt;</span> <span class="n">arabic</span> <span class="o">&amp;</span> <span class="n">english</span> <span class="o">&amp;</span> <span class="n">mandarin</span>
 	<span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -13316,10 +13335,10 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span> 
 <span class="c1"># The reading has an embedded implicature</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to embeded implicature:&quot;</span><span class="p">,</span> 
+	<span class="s2">&quot;Equivalent to an embedded implicature:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">Ax</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">b</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">c</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">c</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">a</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">b</span> <span class="o">&amp;</span> <span class="n">c</span><span class="p">)</span>
+		<span class="n">Aamb</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">arabic</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">english</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mandarin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">arabic</span> <span class="o">&amp;</span> <span class="n">english</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mandarin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">arabic</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">english</span> <span class="o">&amp;</span> <span class="n">mandarin</span><span class="p">)</span>
 	<span class="p">)</span>
 <span class="p">)</span>
 
@@ -13327,7 +13346,7 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 	<span class="s2">&quot;Has distributive implicature:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span>
+		<span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">arabic</span>
 	<span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -13350,15 +13369,15 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span> <span class="o">|</span> <span class="n">c</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Aamb</span> <span class="o">&gt;</span> <span class="n">arabic</span> <span class="o">|</span> <span class="n">english</span> <span class="o">|</span> <span class="n">mandarin</span>
 <span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
-<span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">,</span> <span class="n">subst</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="n">subst</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
 
 <span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 
-<span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">)</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">english</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">arabic</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Eamb</span> <span class="o">&gt;</span> <span class="n">mandarin</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Target Distributive Implicatures:&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
 	<span class="s2">&quot;Equivalent to conjunction of prejacent and dist implicature:&quot;</span><span class="p">,</span> 
@@ -13378,7 +13397,8 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><span id="cumulative_every"></span></p>
-<h1 id="Cumulative-reading-of-every">Cumulative reading of every<a class="anchor-link" href="#Cumulative-reading-of-every">&#182;</a></h1>
+<h1 id="Cumulative-reading-of-every">Cumulative reading of every<a class="anchor-link" href="#Cumulative-reading-of-every">&#182;</a></h1><p>This is exactly the same as above with disjunction replaced with sub-domain existentials</p>
+
 </div>
 </div>
 </div>
@@ -13387,18 +13407,20 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">scrat</span> <span class="o">|</span> <span class="n">acorn</span> <span class="o">|</span> <span class="n">waggs</span>
-<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="n">universe</span>   <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
 <span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
 
-<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+<span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cumulative reading:&quot;</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
 	<span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">scrat</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">acorn</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">waggs</span><span class="p">)</span>
+		<span class="n">cumulative_reading</span>
 	<span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -13421,21 +13443,28 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span> <span class="o">|</span> <span class="n">c</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span>
 <span class="n">sentence</span>   <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">,</span> <span class="n">ii</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
 
 <span class="n">sentence</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cumulative reading:&quot;</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-	<span class="s2">&quot;Equivalent to cumulative reading:          &quot;</span><span class="p">,</span> 
+	<span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> 
 	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span>
 		<span class="n">sentence</span><span class="p">,</span> 
-		<span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">)</span>
+		<span class="n">cumulative_reading</span>
 	<span class="p">)</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-distributive reading: &quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">)))</span>
+<span class="n">doubly_distributive</span> <span class="o">=</span> <span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Doubly distributive reading:&quot;</span><span class="p">,</span> <span class="n">doubly_distributive</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+	<span class="s2">&quot;Equivalent to doubly-distributive reading: &quot;</span><span class="p">,</span> 
+	<span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">doubly_distributive</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13456,14 +13485,15 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">Mx</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span> <span class="o">|</span> <span class="n">c</span>
-<span class="n">first_exh</span>  <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">)</span>
-<span class="n">lf</span>         <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">first_exh</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prejacent</span>  <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">prejacent</span><span class="p">)</span>
+<span class="n">lf</span> <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">))</span>
+
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">lf</span><span class="p">)</span>
 
 <span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)))</span>
 </pre></div>
 
     </div>
@@ -13485,13 +13515,14 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scales</span>     <span class="o">=</span> <span class="p">[{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Universal</span><span class="p">}]</span> <span class="c1"># our &quot;disjunction&quot;, which models the existential with subdomain alternates, should not have a conjunctive alternative</span>
-<span class="n">lf</span>         <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">))))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lf</span>         <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">))))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">lf</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">lf</span><span class="p">)</span>
 
 
 
 <span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+<span class="n">cumulative_reading</span> <span class="o">=</span> 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-dist reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span><span class="p">))</span>
 </pre></div>
@@ -13505,7 +13536,8 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><span id="asymmetries"></span></p>
-<h1 id="Asymmetries-in-cumulative-readings">Asymmetries in cumulative readings<a class="anchor-link" href="#Asymmetries-in-cumulative-readings">&#182;</a></h1><p>Non-cumulative reading of every.</p>
+<h1 id="Asymmetries-in-cumulative-readings">Asymmetries in cumulative readings<a class="anchor-link" href="#Asymmetries-in-cumulative-readings">&#182;</a></h1><p><em>Every nut appealed to the squirrels</em></p>
+<p>With 4 Exh, the computations get a bit slow. It takes 3-5s on my computer.</p>
 
 </div>
 </div>
@@ -13516,14 +13548,57 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">scales</span>     <span class="o">=</span> <span class="p">[{</span><span class="n">Existential</span><span class="p">,</span> <span class="n">Universal</span><span class="p">}]</span> <span class="c1"># our &quot;disjunction&quot;, which models the existential with subdomain alternates, should not have a conjunctive alternative</span>
-<span class="n">lf</span>         <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">))))</span>
+<span class="n">lf</span>         <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">))))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">lf</span><span class="p">)</span>
+
+
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">lf</span><span class="p">)</span>
+<span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
 
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">))</span>
+<span class="n">doubly_distributive</span> <span class="o">=</span> <span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-dist reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">doubly_distributive</span><span class="p">))</span>
+</pre></div>
 
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><span id="schein"></span>
+<em>The video-games taught every quarterback two new plays.</em></p>
+<p>Here, we will work on small domains to avoid blowing up the computer</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">D2</span> <span class="o">=</span> <span class="n">Domain</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Evideo</span>       <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;vg&quot;</span><span class="p">,</span>  <span class="n">domain</span> <span class="o">=</span> <span class="n">D2</span><span class="p">)</span>
+<span class="n">Avideo</span>       <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;vg&quot;</span><span class="p">,</span>    <span class="n">domain</span> <span class="o">=</span> <span class="n">D2</span><span class="p">)</span>
+<span class="n">Aquarterback</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;qb&quot;</span><span class="p">,</span>    <span class="n">domain</span> <span class="o">=</span> <span class="n">D2</span><span class="p">)</span>
+<span class="n">Equarterback</span> <span class="o">=</span> <span class="n">E</span><span class="p">(</span><span class="s2">&quot;qb&quot;</span><span class="p">,</span>    <span class="n">domain</span> <span class="o">=</span> <span class="n">D2</span><span class="p">)</span>
+<span class="n">two_plays</span>    <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="s2">&quot;play&quot;</span><span class="p">,</span>  <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span> <span class="c1"># using most which is equivalent to two on that domain</span>
+<span class="n">Eplay</span>        <span class="o">=</span> <span class="n">E</span><span class="p">(</span><span class="s2">&quot;play&quot;</span><span class="p">,</span>  <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span> <span class="c1"># using most which is equivalent to two on that domain</span>
+<span class="n">taught</span>       <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;taught&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;vg&quot;</span><span class="p">,</span> <span class="s2">&quot;qb&quot;</span><span class="p">,</span> <span class="s2">&quot;play&quot;</span><span class="p">],</span> <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="n">D2</span><span class="p">,</span> <span class="n">D2</span><span class="p">,</span> <span class="n">D3</span><span class="p">])</span>
+
+<span class="n">prejacent</span> <span class="o">=</span> <span class="n">Aquarterback</span> <span class="o">&gt;</span> <span class="n">two_plays</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">Evideo</span> <span class="o">&gt;</span> <span class="n">taught</span><span class="p">)</span> <span class="c1"># Little problem with C constructor requires parenthesis to parse</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prejacent</span><span class="p">)</span>
+<span class="n">lf</span> <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">prejacent</span><span class="p">))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">lf</span><span class="p">)</span>
 
 <span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="p">(</span><span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Ex</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-dist reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">Ax</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span><span class="p">))</span>
+
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="n">prejacent</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Avideo</span> <span class="o">&gt;</span> <span class="n">Equarterback</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">Eplay</span> <span class="o">&gt;</span> <span class="n">taught</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13537,6 +13612,7 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <p><span id="ordinary"></span></p>
 <h1 id="Ordinary-cumulative-sentences">Ordinary cumulative sentences<a class="anchor-link" href="#Ordinary-cumulative-sentences">&#182;</a></h1><p>Ordinary cumulative sentences<br>
 <em>The squirrels cracked the nuts</em></p>
+<p><strong>Caution:</strong> This is by far the most computation-greedy cells of the notebook. Takes 30s to 1min to run on my (old) computer.</p>
 
 </div>
 </div>
@@ -13546,15 +13622,94 @@ Since the fully exhuastified statement does not entail the dist. implicature, th
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s1_cracked_n1</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;s1 cracked n1&quot;</span><span class="p">)</span>
-<span class="n">s1_cracked_n2</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;s2 cracked n1&quot;</span><span class="p">)</span>
-<span class="n">s2_cracked_n1</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;s1 cracked n2&quot;</span><span class="p">)</span>
-<span class="n">s2_cracked_n2</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;s2 cracked n2&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We need to redefine the quantifier </span>
+<span class="n">Enut</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">Anut</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">,</span>   <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">Esquirrel</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span> 
+<span class="n">Asquirrel</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span>   <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">cracked</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cracked&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="s2">&quot;nut&quot;</span><span class="p">],</span> <span class="n">domains</span> <span class="o">=</span> <span class="p">(</span><span class="n">D3</span><span class="p">,</span> <span class="n">D3</span><span class="p">))</span>
+<span class="n">lf</span>      <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">))))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">lf</span><span class="p">)</span>
 
 
-<span class="n">sentence</span> <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">s1_cracked_n1</span><span class="p">,</span> <span class="n">alts</span> <span class="o">=</span> <span class="p">[</span><span class="n">s1_cracked_n2</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">alts</span><span class="p">)</span>
-<span class="c1"># print(&quot;Equivalent to cumulative reading:&quot;, universe.equivalent(lf, (Ax &gt; a | b) &amp; (Ex &gt; a) &amp; (Ex &gt; b)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">lf</span><span class="p">)</span>
+<span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">))</span>
+<span class="n">doubly_distributive</span> <span class="o">=</span> <span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-dist reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">doubly_distributive</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Does it not work? Well, notice how none of the alterantives considered by <em>Exh</em> have any of the <em>Exh</em> stripped away.
+The package implements this behavior by default. If we allow the prejacent of Exh to be an alternative to Exh, the account of Free choice is lost!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">options_alts</span><span class="o">.</span><span class="n">prejacent_alternative_to_exh</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">free_choice</span> <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">free_choice</span><span class="p">)</span>
+<span class="n">options_alts</span><span class="o">.</span><span class="n">prejacent_alternative_to_exh</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">free_choice</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No strengthening:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">free_choice</span><span class="p">,</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Is that an issue? Maybe we need to consider recursive <em>Exh</em> (i.e. <em>Exh Exh</em>) as a unit. As a unit, <em>Exh Exh</em> does not have <em>Exh</em> as an alternative, but it does have its prejacent as an alternative.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Enut</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">Anut</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;nut&quot;</span><span class="p">,</span>   <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">Esquirrel</span> <span class="o">=</span> <span class="n">Ec_</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span> 
+<span class="n">Asquirrel</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span>   <span class="n">domain</span> <span class="o">=</span> <span class="n">D3</span><span class="p">)</span>   
+<span class="n">cracked</span> <span class="o">=</span> <span class="n">Pred</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cracked&quot;</span><span class="p">,</span> <span class="n">depends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;squirrel&quot;</span><span class="p">,</span> <span class="s2">&quot;nut&quot;</span><span class="p">],</span> <span class="n">domains</span> <span class="o">=</span> <span class="p">(</span><span class="n">D3</span><span class="p">,</span> <span class="n">D3</span><span class="p">))</span>
+<span class="n">lf</span>      <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span>
+	<span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Exh</span><span class="p">(</span><span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)),</span>
+	<span class="n">extra_alts</span> <span class="o">=</span> <span class="n">Exh</span><span class="p">(</span><span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span><span class="o">.</span><span class="n">alts</span>
+<span class="p">))</span>
+<span class="n">universe</span> <span class="o">=</span> <span class="n">Universe</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">lf</span><span class="p">)</span>
+
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assumed LF:&quot;</span><span class="p">,</span> <span class="n">lf</span><span class="p">)</span>
+<span class="n">lf</span><span class="o">.</span><span class="n">diagnose</span><span class="p">(</span><span class="n">display</span><span class="p">)</span>
+
+<span class="n">cumulative_reading</span> <span class="o">=</span> <span class="p">(</span><span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">Esquirrel</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Enut</span> <span class="o">&gt;</span> <span class="n">cracked</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to cumulative reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">cumulative_reading</span><span class="p">))</span>
+<span class="n">doubly_distributive</span> <span class="o">=</span> <span class="n">Asquirrel</span> <span class="o">&gt;</span> <span class="n">Anut</span> <span class="o">&gt;</span> <span class="n">cracked</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Equivalent to doubly-dist reading:&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">doubly_distributive</span><span class="p">))</span>
+
+
 <span class="c1"># print(&quot;Equivalent to doubly-dist reading:&quot;, universe.equivalent(lf, Ax &gt; a &amp; b))</span>
 
 

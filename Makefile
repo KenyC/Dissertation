@@ -26,3 +26,4 @@ rebuild: clean all
 
 %.ipynb: %.py
 	py2jp   $<
+# 	jupyter nbconvert $@ --to notebook --execute --inplace
