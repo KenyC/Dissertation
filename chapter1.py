@@ -59,7 +59,7 @@ prejacent = Edancer > smiled # there is a dancer that smiled
 universe = Universe(f = prejacent) # Universe objects contain all logical possibilities ; we can use them to check for equivalences
 sentence  = Exh(Exh(prejacent))
 # The combination of dots and circles on the quantifier represent the domain of the existential quantifier: dots are individuals outside the domain, circle individuals inside
-print("Assumed sentence:", sentence)
+print("Assumed LF:", sentence)
 sentence.diagnose(display)
 print(
 	"Equivalent to universal:", 
@@ -89,7 +89,7 @@ print(
 # %%
 """
 <span id="cumulative_every_naive"></span>
-# Cumulative reading of every/distributive implicatures : non-recursive exhaustification
+# Cumulative reading of every/distributive implicatures : non-recursive exhaustification without some/all scale
 *Every ambassador speaks Arabic, French or Mandarin*  
 *The three squirrels cracked every nut*
 
@@ -100,7 +100,7 @@ Note how we perform the exhaustification, ignoring that "every" has "some" as an
 
 prejacent  = Aamb > arabic | english | mandarin
 universe   = Universe(f = prejacent)
-sentence   = Exh(prejacent, scales = []) # we must ignore the "some/all" scales. As p
+sentence   = Exh(prejacent, scales = []) # we must ignore the "some/all" scales. 
 
 print("Assumed LF:", sentence)
 
@@ -116,6 +116,37 @@ print(
 	universe.equivalent(
 		sentence, 
 		prejacent & dist
+	)
+)
+
+# %%
+"""
+<span id="ii_with_some"></span>
+# Cumulative reading of every/distributive implicatures : non-recursive exhaustification with some/all scale
+*Every ambassador speaks Arabic, French or Mandarin*  
+*The three squirrels cracked every nut*
+
+Here, we allow "some" as an alternative to "every". We don't generate problematic distributive implicature because we don't generate any implicature at all!
+"""
+
+prejacent  = Aamb > arabic | english | mandarin
+universe   = Universe(f = prejacent)
+sentence   = Exh(prejacent, scales = [{Existential, Universal}]) # we must ignore the "some/all" scales. 
+
+print("Assumed LF:", sentence)
+
+sentence.diagnose(display)
+print(
+	"There is an ambassador that only speaks English:", 
+	universe.entails(sentence, Eamb > english & ~arabic & ~mandarin)
+)
+
+dist = (Eamb > english) & (Eamb > arabic) & (Eamb > mandarin)
+print(
+	"Equivalent to prejacent:", 
+	universe.equivalent(
+		sentence,
+		prejacent
 	)
 )
 
@@ -303,7 +334,64 @@ lf.diagnose(display)
 print("Equivalent to cumulative reading:", universe.equivalent(lf, prejacent & (Asquirrel > Enut > cracked)))
 
 
+# %%
+"""
+<span id="cumulative_most_impl"></span>
+# Cumulative reading of most : with all alternative
+"""
+prejacent  = M("nut") > Esquirrel > cracked
+universe = Universe(f = prejacent)
+scales = ListScales([
+	SimpleScales([{Existential, Most, Universal}]),
+	sub_scale
+])
+lf = Exh(Exh(prejacent, scales = scales), scales = scales)
 
+
+print("Assumed LF:", lf)
+
+lf.diagnose(display)
+cumul_impl = prejacent & (Asquirrel > Enut > cracked) & ~(Anut > Esquirrel > cracked)
+
+print(
+	"Equivalent to cumulative reading + implicature:", 
+	universe.equivalent(
+		lf, 
+		cumul_impl
+	)
+)
+print("Cumulative reading + implicature :=")
+print(cumul_impl)
+
+
+# %%
+"""
+<span id="schein"></span>
+# Schein's video-game example
+*The video-games taught every quarterback two new plays.*
+
+Here, we will work on small domains to avoid blowing up the computer
+"""
+
+# Defining the quantifiers of the sentence
+D2 = Domain(2)
+Evideo       = Ec_("vg",  domain = D2) # An existential with sub-domain alternatives
+Avideo       = A("vg",    domain = D2)
+Aquarterback = A("qb",    domain = D2) # ... every quarterback ...
+Equarterback = E("qb",    domain = D2)
+two_plays    = M("play",  domain = D3) # using most which is equivalent to two on a domain of cardinality 3
+Eplay        = E("play",  domain = D3) 
+taught       = Pred(name = "taught", depends = ["vg", "qb", "play"], domains = [D2, D2, D3])
+
+prejacent = Aquarterback > two_plays > (Evideo > taught) # Little problem with C constructor requires parenthesis to parse
+print(prejacent)
+lf = Exh(Exh(prejacent))
+universe = Universe(f = lf)
+
+lf.diagnose(display)
+
+cumulative_reading = prejacent & (Avideo > Equarterback > (Eplay > taught))
+print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
 
 
 # %%
@@ -345,33 +433,6 @@ print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_re
 doubly_distributive = Asquirrel > Anut > cracked
 print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
 
-# %%
-"""
-<span id="schein"></span>
-# Schein's video-game example
-*The video-games taught every quarterback two new plays.*
-
-Here, we will work on small domains to avoid blowing up the computer
-"""
-
-D2 = Domain(2)
-Evideo       = Ec_("vg",  domain = D2)
-Avideo       = A("vg",    domain = D2)
-Aquarterback = A("qb",    domain = D2)
-Equarterback = E("qb",    domain = D2)
-two_plays    = M("play",  domain = D3) # using most which is equivalent to two on that domain
-Eplay        = E("play",  domain = D3) # using most which is equivalent to two on that domain
-taught       = Pred(name = "taught", depends = ["vg", "qb", "play"], domains = [D2, D2, D3])
-
-prejacent = Aquarterback > two_plays > (Evideo > taught) # Little problem with C constructor requires parenthesis to parse
-print(prejacent)
-lf = Exh(Exh(prejacent))
-universe = Universe(f = lf)
-
-lf.diagnose(display)
-
-cumulative_reading = prejacent & (Avideo > Equarterback > (Eplay > taught))
-print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
 
 # %%
 """
@@ -380,70 +441,56 @@ print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_re
 Ordinary cumulative sentences  
 *The squirrels cracked the nuts*
 
-**Caution:** This is by far the most computation-greedy cells of the notebook. Takes 30s to 1min to run on my (old) computer.
+**Caution:** The last two cells are the most computation-greedy cells of the notebook. Takes 5-10s to run to run on my (old) computer.
+
+Here, to be faithful to what happens at the actual LF, we must first compute recursive strengthening on alternatives where the domain of the squirrels exsitential is fixed.
+To do so, I manually generate alternatives for a sentence where Esquirrel is replaced with an existential without subdomain alternatives.
 """
+from exh.alternatives import alt
+Dsquirrel = Domain(3)
+Dnut      = Domain(3)
 
-# We need to redefine the quantifier 
-Enut = Ec_("nut", domain = D3)   
-Anut = A("nut",   domain = D3)   
-Esquirrel = Ec_("squirrel", domain = D3) 
-Asquirrel = A("squirrel",   domain = D3)   
-cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (D3, D3))
-lf      = Exh(Exh(Exh(Exh(Enut > Esquirrel > cracked))))
-universe = Universe(f = lf)
+Enut = Ec_("nut", domain = Dnut)   
+Anut = A("nut",   domain = Dnut)   
+Esquirrel = Ec_("squirrel", domain = Dsquirrel) 
+Asquirrel = A("squirrel",   domain = Dsquirrel)   
+cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (Dsquirrel, Dnut))
+universe = Universe(f = cracked)
 
-
-
-print("Assumed LF:", lf)
-lf.diagnose(display)
-
-cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
-print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
-doubly_distributive = Asquirrel > Anut > cracked
-print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
+alts_to_nut = alt(
+	E("squirrel", domain = Dsquirrel) > Enut > cracked, 
+	scales = sub_scale, 
+	subst  = options_alts.sub
+) 
+first_strengthening =  Exh(Exh(Esquirrel > Enut > cracked, alts = alts_to_nut))
+print("First strengthening", first_strengthening)
+first_strengthening.diagnose(display)
+print('Equivalent to "{}" :'.format(Anut > Esquirrel > cracked),
+	universe.equivalent(first_strengthening, Anut > Esquirrel > cracked)
+)
+print("###############################")
 
 # %%
 """
-Does it not work? Well, notice how none of the alterantives considered by *Exh* have any of the *Exh* stripped away.
-The package implements this behavior by default. If we allow the prejacent of Exh to be an alternative to Exh, the account of Free choice is lost!
+The second strengthening consider alternatives to Esquirrel quantifiers. We generate them manually as before.
+
 """
 
-options_alts.prejacent_alternative_to_exh = True
-free_choice = Exh(Exh(a | b))
-universe = Universe(f = free_choice)
-options_alts.prejacent_alternative_to_exh = False
+alts_to_squirrel = alt(
+	# Enut > Esquirrel > cracked, 
+	E("nut", domain = Dnut) > Esquirrel > cracked, 
+	scales = sub_scale, 
+	subst  = options_alts.sub
+) 
+second_strengthening = Exh(Exh(first_strengthening, extra_alts = alts_to_squirrel))
 
-free_choice.diagnose(display)
-print("No strengthening:", universe.equivalent(free_choice, a | b))
-
-# %%
-"""
-Is that an issue? Maybe we need to consider recursive *Exh* (i.e. *Exh Exh*) as a unit. As a unit, *Exh Exh* does not have *Exh* as an alternative, but it does have its prejacent as an alternative.
-"""
-
-Enut = Ec_("nut", domain = D3)   
-Anut = A("nut",   domain = D3)   
-Esquirrel = Ec_("squirrel", domain = D3) 
-Asquirrel = A("squirrel",   domain = D3)   
-cracked = Pred(name = "cracked", depends = ["squirrel", "nut"], domains = (D3, D3))
-lf      = Exh(Exh(
-	Enut > Exh(Exh(Esquirrel > cracked)),
-	extra_alts = Exh(Enut > Esquirrel > cracked).alts
+print("Second strengthening", first_strengthening)
+second_strengthening.diagnose(display)
+print("Equivalent to cumulative reading:",
+	universe.equivalent(
+		second_strengthening, 
+		(Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
 ))
-universe = Universe(f = lf)
-
-
-
-print("Assumed LF:", lf)
-lf.diagnose(display)
-
-cumulative_reading = (Anut > Esquirrel > cracked) & (Asquirrel > Enut > cracked)
-print("Equivalent to cumulative reading:", universe.equivalent(lf, cumulative_reading))
-doubly_distributive = Asquirrel > Anut > cracked
-print("Equivalent to doubly-dist reading:", universe.equivalent(lf, doubly_distributive))
-
-
-# print("Equivalent to doubly-dist reading:", universe.equivalent(lf, Ax > a & b))
 
 
 # %%
